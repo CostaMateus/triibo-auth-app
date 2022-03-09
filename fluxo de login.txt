@@ -1,0 +1,78 @@
+
+
+Redirecionar o usuário logado do APP Triibo para o marketplace
+
+URL_BASE == https://dev-marketplace.triibo.com.br/wp-json/triibo-rest/v1/users/login
+
+HEADER   == api-token == 7472216240776562417070486d4c6170693139
+
+URL      == dev-marketplace.com.br/produto-slug-teste
+CELULAR  == +55 11 94928 9507
+DATA     == type|value|verified
+
+            type     => email || emailMarketplace
+            value    => me@example.com
+            verified => true || false || 1 || 0
+
+
+
+1 - app encaminha CELULAR, DATA e URL
+2 - verifica se DATA está setado
+    caso sim:
+        3 - verifica se DATA->type é igual a "emailMarketplace" e DATA->verified é "true"
+            caso sim:
+                4 - busca usuário pelo DATA->value (email)
+                5 - PASSO_COMUNM
+
+            caso não:
+                6 - DATA->type é igual a "email"
+                7 - verifica se DATA->value (email) é cadastrado no marketplace
+                    caso sim:
+                        8 - verifica se DATA->verified é "true"
+                            caso sim:
+                                9  - add/att o user_meta -> triiboId_phone da conta mkt-triibo
+                                10 - PASSO_COMUNM
+
+                            caso não:
+                                11 - envia código por email
+                                12 - verifica se é válido o código
+                                    caso sim:
+                                        13 - add/att o user_meta -> triiboId_phone da conta mkt-triibo
+                                        14 - PASSO_COMUNM
+
+                                    caso não:
+                                        15 - impede login
+
+                    caso não:
+                        16 - verifica se DATA->verified é "true"
+                            caso sim:
+                                17 - pede uma senha pra nova conta
+                                18 - cria conta mkt-triibo (email e senha)
+                                19 - add/att o user_meta -> triiboId_phone da conta mkt-triibo
+                                20 - PASSO_COMUNM
+
+                            caso não:
+                                21 - envia código por email
+                                22 - verifica se é válido o código
+                                    caso sim:
+                                        23 - volta para o passo 17
+
+                                    caso não:
+                                        24 - impede login
+
+    caso não:
+        25 - procura usuário com user_meta -> triiboId_phone
+            caso sim:
+                26 - recupera email do usuário
+                27 - pede senha da conta mkt e valida
+                28 - PASSO_COMUNM
+
+            caso não:
+                29 - pede email
+                30 - volta para o passo 17
+
+
+PASSO_COMUNM
+1 - efetua login
+2 - se precisar, update firebase -> contactList (email e emailMarketplace)
+3 - redireciona para URL
