@@ -17,8 +17,8 @@ defined( "ABSPATH" ) || exit;
  *
  * @package Triibo\RestApi
  */
-class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller {
-
+class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
+{
 	/**
 	 * Endpoint namespace.
 	 *
@@ -109,70 +109,52 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller {
 				// passo 4
 				$user_id = email_exists( $email );
 
-				// passo 5 e 6
+				// passo 5 (passo_comum)
 				self::make_login( $user_id, $url );
 			}
-			// passo 7
+			// passo 6
 			else
 			{
-				// passo 8
+				// passo 7
 				$user_id = email_exists( $email );
 
+				// passo 8
 				if ( $user_id && $verified )
 				{
-					// passo 10
+					// passo 9
 					update_user_meta( $user_id, "triiboId_phone", "+$cellphone" );
 
-					// passo 11 e 12
+					// passo 10 (passo_comum)
+					TAA_TRIIBO_Firebase::update_user_triibo( $cellphone, $email, "ADD" );
 					self::make_login( $user_id, $url );
-
-					// TODO
-					// atualizar conta do usuário na Triibo
-					// contactList->emailMarketplace
-					// contactList->email
 				}
+				// passo 8
 				else if ( $user_id && ! $verified )
 				{
-					// passo 13
+					// passo 11
 					$params = self::send_email_code( $email ) ? "taac=code&email=$email" : null;
+					// passo 12
 					self::redirect( $url, $params );
-
-					// passo 14 a 18, ficará na outra função que validará o codigo
-
-					// TODO
-					// atualizar conta do usuário na Triibo
-					// contactList->emailMarketplace
-					// contactList->email
 				}
+				// passo 16
 				else if ( ! $user_id && $verified )
 				{
-					// passo 20
+					// passo 17
 					$params = "taac=newacc&email=$email";
 					self::redirect( $url, $params );
-
-					// passo 21 a 23, ficará na outra função que validará a senha e criação a conta
-
-					// atualizar conta do usuário na Triibo
-					// contactList->emailMarketplace
-					// contactList->email
 				}
+				// passo 16
 				else // ( ! $user_id && ! $verified )
 				{
-					// passo 24
+					// passo 21
 					$params = self::send_email_code( $email ) ? "taac=code&email=$email" : null;
 					self::redirect( $url, $params );
-
-					// passo 20
-					// pedir senha para nova conta
-					// atualizar conta do usuário na Triibo
-					// contactList->emailMarketplace
-					// contactList->email
 				}
 			}
 		}
 		else if ( $cellphone )
 		{
-			// passo 28
+			// passo 25
 			$user = get_users([
 				"meta_key"   => "triiboId_phone",
 				"meta_value" => "+$cellphone"
@@ -180,15 +162,17 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller {
 
 			if ( ! empty( $user ) )
 			{
-				// passo 29
+				// passo 26
 				$user   = reset( $user );
-				$email  = $user->email;
+				$email  = $user->user_email;
 
+				// passo 27
 				$params = "taac=acc&email=$email";
 				self::redirect( $url, $params );
 			}
 			else
 			{
+				// passo 29
 				$params = "taac=newacc";
 				self::redirect( $url, $params );
 			}
