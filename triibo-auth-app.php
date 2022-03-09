@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:          #Triibo_Auth_App
- * Description:          Loga o usuário oriundo do Triibo App
+ * Description:          Loga o usuário oriundo do Triibo App. Depende do WooCommerce.
  * Author:               Mateus Costa
  * Author URI:           https://costamateus.com.br/
  * Version:              1.0.0
@@ -12,16 +12,10 @@
  * @package Triibo_Auth_App
  */
 
-if ( ! defined( "ABSPATH" ) ) exit;
+defined( "ABSPATH" ) || exit;
 
 if ( ! is_plugin_active( "woocommerce/woocommerce.php" ) ) exit;
 
-// init class rest-api
-if ( ! class_exists( "TAA_Triibo_Rest_Api" ) )
-{
-	include_once dirname( __FILE__ ) . "/includes/classes/rest-api/class-taa-triibo-rest-api.php";
-	add_action( "plugins_loaded", array( "TAA_Triibo_Rest_Api", "init" ) );
-}
 
 // init class auth-app
 if ( ! class_exists( "TAA_Triibo_Auth_App" ) )
@@ -30,14 +24,34 @@ if ( ! class_exists( "TAA_Triibo_Auth_App" ) )
 	add_action( "plugins_loaded", array( "TAA_Triibo_Auth_App", "init" ) );
 }
 
-// add style/script/html
-add_action( "wp_footer", "TAA_add_modal_teste" );
-function TAA_add_modal_teste()
+
+// init class firebase
+if ( ! class_exists( "TAA_Triibo_Firebase" ) )
 {
-	include_once( plugin_dir_path( __FILE__ ) . "includes/assets/style.php"            );
-	include_once( plugin_dir_path( __FILE__ ) . "includes/modals/new-account.php"      );
-	include_once( plugin_dir_path( __FILE__ ) . "includes/modals/new-password.php"     );
-	include_once( plugin_dir_path( __FILE__ ) . "includes/modals/validate-account.php" );
-	include_once( plugin_dir_path( __FILE__ ) . "includes/modals/validate-code.php"    );
-	include_once( plugin_dir_path( __FILE__ ) . "includes/assets/script.php"           );
+	include_once dirname( __FILE__ ) . "/includes/classes/firebase/class-taa-triibo-firebase.php";
+	add_action( "plugins_loaded", array( "TAA_Triibo_Firebase", "init" ) );
+}
+
+
+// init class rest-api
+if ( ! class_exists( "TAA_Triibo_Rest_Api" ) )
+{
+	include_once dirname( __FILE__ ) . "/includes/classes/rest-api/class-taa-triibo-rest-api.php";
+	add_action( "plugins_loaded", array( "TAA_Triibo_Rest_Api", "init" ) );
+}
+
+
+if ( ! defined( "TAA_dir" ) ) define( "TAA_dir", plugin_dir_path( __FILE__ ) );
+
+
+// add style/script/html
+add_action( "wp_footer", "TAA_add_parts" );
+function TAA_add_parts()
+{
+	include_once( TAA_dir . "includes/assets/style.php"            );
+	include_once( TAA_dir . "includes/modals/new-account.php"      );
+	include_once( TAA_dir . "includes/modals/new-password.php"     );
+	include_once( TAA_dir . "includes/modals/validate-account.php" );
+	include_once( TAA_dir . "includes/modals/validate-code.php"    );
+	include_once( TAA_dir . "includes/assets/script.php"           );
 }
