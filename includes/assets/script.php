@@ -232,11 +232,6 @@
                 window.taaSubmitNewAccount();
             break;
 
-            // case "taa-btn-form-new-password":
-            //     e.preventDefault();
-            //     // window.taaSubmitTest();
-            // break;
-
             case "taa-btn-form-validate-account":
                 e.preventDefault();
                 window.taaSubmitValAccount();
@@ -278,9 +273,6 @@
 
     window.taaAjaxError = function ( err )
     {
-        // taaEnableBtns();
-        // jQuery( "#modal-load-next-page" ).addClass( "bgml-d-none" );
-        // jQuery( error_auth ).removeClass( "taa-d-none" ).html( genericError1 );
         console.log( err );
         window.location.href = window.location.href.split( "?" )[0];
     }
