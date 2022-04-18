@@ -75,6 +75,7 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 
 	public function get_item( $request )
 	{
+		// Chamar api de validação de BearerToken // self::redirect( $url );
 		// $api_token = $request->get_header( "api-token" );
 
 		$cellphone = $request->get_param( "cellphone" ) ?: null;
@@ -85,10 +86,6 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 		$url       = $request->get_param( "url" )  ?: null;
 		$user      = null;
 		$params    = null;
-
-		// // api_token ausente ou invalida
-		// // redireciona para $url ou para "/", caso $url null
-		// if ( ! $api_token || $api_token != TAA_API_TOKEN ) self::redirect( $url );
 
 		// celular e email ausentes na request
 		// redireciona para $url ou para "/", caso $url null

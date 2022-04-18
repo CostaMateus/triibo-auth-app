@@ -107,8 +107,6 @@ class TAA_Triibo_Firebase
                     "value"    => $email,
                     "verified" => true
                 ]);
-
-                file_put_contents( TAA_dir . "taa.log", $data, FILE_APPEND );
             break;
         }
 

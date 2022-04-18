@@ -20,9 +20,6 @@ class TAA_Triibo_Rest_Api
 	public static function init()
 	{
         $env = ( strpos( home_url(), "dev-" ) !== FALSE ) ? "dev" : "prod";
-        $tkn = ( $env == "dev" ) ? "7472216240776562417070486d4c6170693139" : "57336266417050612750524C4170495029";
-
-        define( "TAA_API_TOKEN", $tkn );
 
         self::includes();
 
