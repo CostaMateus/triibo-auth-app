@@ -17,7 +17,7 @@ defined( "ABSPATH" ) || exit;
  */
 class TAA_Triibo_Firebase
 {
-	public function init()
+	public function __construct()
 	{
         /**
          * Verifica o ambiente que está

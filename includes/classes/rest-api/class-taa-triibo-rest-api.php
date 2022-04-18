@@ -17,13 +17,13 @@ class TAA_Triibo_Rest_Api
 	/**
 	 * Initialize the plugin public actions.
 	 */
-	public static function init()
+    public function __construct()
 	{
         $env = ( strpos( home_url(), "dev-" ) !== FALSE ) ? "dev" : "prod";
 
         self::includes();
 
-        add_action( "rest_api_init", array( __CLASS__, "register_rest_routes" ) );
+        add_action( "rest_api_init", array( $this, "register_rest_routes" ) );
     }
 
 	/**
@@ -38,7 +38,7 @@ class TAA_Triibo_Rest_Api
     /**
      * Register REST API routes.
      */
-    function register_rest_routes()
+    public function register_rest_routes()
     {
         foreach ( self::get_rest_namespaces() as $controllers )
         {
@@ -68,3 +68,5 @@ class TAA_Triibo_Rest_Api
     }
 
 }
+
+new TAA_Triibo_Rest_Api();

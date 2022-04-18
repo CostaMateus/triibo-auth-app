@@ -21,7 +21,7 @@ if ( ! is_plugin_active( "woocommerce/woocommerce.php" ) ) exit;
 if ( ! class_exists( "TAA_Triibo_Auth_App" ) )
 {
 	include_once dirname( __FILE__ ) . "/includes/classes/auth-app/class-taa-triibo-auth-app.php";
-	add_action( "plugins_loaded", array( "TAA_Triibo_Auth_App", "init" ) );
+	// add_action( "plugins_loaded", "TAA_Triibo_Auth_App" );
 }
 
 
@@ -29,7 +29,7 @@ if ( ! class_exists( "TAA_Triibo_Auth_App" ) )
 if ( ! class_exists( "TAA_Triibo_Firebase" ) )
 {
 	include_once dirname( __FILE__ ) . "/includes/classes/firebase/class-taa-triibo-firebase.php";
-	add_action( "plugins_loaded", array( "TAA_Triibo_Firebase", "init" ) );
+	// add_action( "plugins_loaded", "TAA_Triibo_Firebase" );
 }
 
 
@@ -37,7 +37,7 @@ if ( ! class_exists( "TAA_Triibo_Firebase" ) )
 if ( ! class_exists( "TAA_Triibo_Rest_Api" ) )
 {
 	include_once dirname( __FILE__ ) . "/includes/classes/rest-api/class-taa-triibo-rest-api.php";
-	add_action( "plugins_loaded", array( "TAA_Triibo_Rest_Api", "init" ) );
+	// add_action( "plugins_loaded", "TAA_Triibo_Rest_Api" );
 }
 
 
