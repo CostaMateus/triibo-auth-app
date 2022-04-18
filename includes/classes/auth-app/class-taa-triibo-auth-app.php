@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
 class TAA_Triibo_Auth_App
 {
 
-    public function __construct()
+    public function init()
     {
         add_action( "wp_ajax_taa_validate_code",           array( $this, "taa_validate_code"      ) );
         add_action( "wp_ajax_nopriv_taa_validate_code",    array( $this, "taa_validate_code"      ) );
