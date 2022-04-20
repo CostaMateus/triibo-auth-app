@@ -40,6 +40,15 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 	 */
 	protected $request = array();
 
+	protected $log;
+
+	protected $id = "triibo_auth_app";
+
+	public function __construct()
+	{
+		$this->log = ( function_exists( "wc_get_logger" ) ) ? wc_get_logger() : new WC_Logger();
+	}
+
 	/**
 	 * Register the routes for users.
 	 */
@@ -75,15 +84,19 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 
 	public function get_item( $request )
 	{
-		// Chamar api de validação de BearerToken // self::redirect( $url );
-		// $api_token = $request->get_header( "api-token" );
+		$url    = $request->get_param( "url" )  ?: null;
+
+		$bearer = $request->get_header("authorization");
+
+		if ( ! $bearer ) self::redirect( $url );
+
+		if ( ! $this->validate_token( $bearer ) ) self::redirect( $url );
 
 		$cellphone = $request->get_param( "cellphone" ) ?: null;
         $cellphone = preg_replace( "/\D/", "", $cellphone );
 		set_transient( "_taa_triibo_cellphone", $cellphone );
 
 		$data      = $request->get_param( "data" ) ?: null;
-		$url       = $request->get_param( "url" )  ?: null;
 		$user      = null;
 		$params    = null;
 
@@ -106,6 +119,8 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 				// passo 4
 				$user_id = email_exists( $email );
 
+				$this->log->add( $this->id, "Redirect cellphone: +$cellphone" );
+
 				// passo 5 (passo_comum)
 				self::make_login( $user_id, $url );
 			}
@@ -123,6 +138,9 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 
 					// passo 10 (passo_comum)
 					TAA_TRIIBO_Firebase::update_user_triibo( $cellphone, $email, "ADD" );
+
+					$this->log->add( $this->id, "Redirect cellphone: +$cellphone" );
+
 					self::make_login( $user_id, $url );
 				}
 				// passo 8
@@ -225,4 +243,54 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 		wp_set_auth_cookie( $user_id, true );
 		self::redirect( $url );
 	}
+
+	private static function get_env( $mkt = null )
+	{
+		if ( $mkt )
+			return ( ( strpos( home_url(), "dev-" ) !== FALSE ) ? "dev-" : "");
+		else
+			return ( ( strpos( home_url(), "dev-" ) !== FALSE ) ? "-hml" : "");
+	}
+
+	private static function get_url()
+	{
+		return "https://" . self::get_env( true ) . "marketplace.triibo.com.br";
+	}
+
+	private static function get_api_url()
+	{
+		return "https://api" . self::get_env() . ".triibo.com.br";
+	}
+
+	private function validate_token( string $bearer )
+	{
+		$ch      = curl_init();
+
+		$headers = [
+			"Origin: " . self::get_url(),
+			"Authorization: " . $bearer,
+			"Content-type: application/json",
+			"x-api-key: 652e0505-f010-48a4-a9a5-ce12783777ea"
+		];
+
+		curl_setopt_array( $ch, [
+			CURLOPT_URL            => self::get_api_url() . "/auth/marketplace",
+			CURLOPT_RETURNTRANSFER => TRUE,
+			CURLOPT_ENCODING       => "",
+			CURLOPT_MAXREDIRS      => 10,
+			CURLOPT_TIMEOUT        => 60,
+			CURLOPT_SSL_VERIFYPEER => FALSE ,
+			CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST  => "POST",
+			CURLOPT_HTTPHEADER     => $headers
+        ]);
+
+        $resp = curl_exec( $ch );
+        curl_close( $ch );
+
+        $resp = json_decode( $resp, TRUE );
+
+		return ( ! $resp["success"] ) ? false : true;
+	}
+
 }
