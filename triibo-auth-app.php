@@ -48,10 +48,19 @@ if ( ! defined( "TAA_dir" ) ) define( "TAA_dir", plugin_dir_path( __FILE__ ) );
 add_action( "wp_footer", "TAA_add_parts" );
 function TAA_add_parts()
 {
-	include_once( TAA_dir . "includes/assets/style.php"            );
 	include_once( TAA_dir . "includes/modals/new-account.php"      );
 	include_once( TAA_dir . "includes/modals/new-password.php"     );
 	include_once( TAA_dir . "includes/modals/validate-account.php" );
 	include_once( TAA_dir . "includes/modals/validate-code.php"    );
-	include_once( TAA_dir . "includes/assets/script.php"           );
+
+	// create my own version codes
+	$js_path  = "includes/assets/script.js";
+	$css_path = "includes/assets/style.css";
+
+	$js_ver   = date( "ymd-His", filemtime( plugin_dir_path( __FILE__ ) . $js_path  ));
+	$css_ver  = date( "ymd-His", filemtime( plugin_dir_path( __FILE__ ) . $css_path ));
+
+	wp_enqueue_script( "TAA_script", plugins_url( $js_path,  __FILE__ ), array( "jquery" ), $js_ver  );
+	wp_register_style( "TAA_css",    plugins_url( $css_path, __FILE__ ), false,             $css_ver );
+	wp_enqueue_style ( "TAA_css" );
 }

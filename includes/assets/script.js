@@ -1,4 +1,6 @@
-<script>
+( function ( $ ) {
+
+    "use strict";
 
     let taa_mna = document.getElementById( "taa-modal-new-account"         );
     let taa_mnp = document.getElementById( "taa-modal-new-password"        );
@@ -15,7 +17,7 @@
     let taa_eva = document.getElementById( "taa-error-validate-acc"        );
     let taa_evc = document.getElementById( "taa-error-validate-code"       );
 
-    jQuery(document).ready(function() {
+    $( document ).ready( function() {
 
         const queryString = window.location.search;
         const urlParams   = new URLSearchParams( queryString );
@@ -27,37 +29,37 @@
             switch ( code )
             {
                 case "acc":
-                    jQuery( taa_mva ).removeClass( "taa-d-none" );
-                    jQuery( "#taa-validate-acc-email" ).val( email );
+                    $( taa_mva ).removeClass( "taa-d-none" );
+                    $( "#taa-validate-acc-email" ).val( email );
                 break;
 
                 case "code":
-                    jQuery( taa_mvc ).removeClass( "taa-d-none" );
-                    jQuery( "#taa-email" ).val( email );
+                    $( taa_mvc ).removeClass( "taa-d-none" );
+                    $( "#taa-email" ).val( email );
                 break;
 
                 case "newacc":
-                    jQuery( taa_mna ).removeClass( "taa-d-none" );
-                    if ( email ) jQuery( "#taa-new-acc-email" ).val( email );
+                    $( taa_mna ).removeClass( "taa-d-none" );
+                    if ( email ) $( "#taa-new-acc-email" ).val( email );
                 break;
             }
         }
-    });
+    } );
 
 
     window.taaSubmitValCode = function ()
     {
         window.taaDisableBtns();
 
-        jQuery( taa_evc ).addClass( "taa-d-none" );
-        jQuery( "#taa-code" ).removeClass( "taa-error-border" );
+        $( taa_evc ).addClass( "taa-d-none" );
+        $( "#taa-code" ).removeClass( "taa-error-border" );
 
-        const code  = jQuery( "#taa-code" ).val();
-        const email = jQuery( "#taa-email" ).val();
+        const code  = $( "#taa-code" ).val();
+        const email = $( "#taa-email" ).val();
 
         if ( code != "" && code.length == 6 )
         {
-            jQuery.ajax({
+            $.ajax({
                 url : "/wp-admin/admin-ajax.php",
                 type: "POST",
                 data: {
@@ -73,8 +75,8 @@
                     {
                         window.taaEnableBtns();
 
-                        jQuery( taa_evc ).removeClass( "taa-d-none" ).html( result.message );
-                        jQuery( "#taa-code" ).addClass( "taa-error-border" );
+                        $( taa_evc ).removeClass( "taa-d-none" ).html( result.message );
+                        $( "#taa-code" ).addClass( "taa-error-border" );
                     }
                     else
                     {
@@ -85,10 +87,10 @@
                             break;
 
                             case 2001:
-                                jQuery( taa_mvc ).addClass( "taa-d-none" );
+                                $( taa_mvc ).addClass( "taa-d-none" );
                                 window.taaEnableBtns();
-                                jQuery( taa_mna ).removeClass( "taa-d-none" );
-                                jQuery( "#taa-new-acc-email" ).val( email );
+                                $( taa_mna ).removeClass( "taa-d-none" );
+                                $( "#taa-new-acc-email" ).val( email );
                             break;
                         }
                     }
@@ -103,8 +105,8 @@
             window.taaEnableBtns();
 
             let errorMsg = ( code == "" ) ? "Insira o código recebido" : "O código tem 6 dígitos" ;
-            jQuery( taa_evc ).removeClass( "taa-d-none" ).html( errorMsg );
-            jQuery( "#taa-code" ).addClass( "taa-error-border" );
+            $( taa_evc ).removeClass( "taa-d-none" ).html( errorMsg );
+            $( "#taa-code" ).addClass( "taa-error-border" );
         }
 
     }
@@ -113,31 +115,31 @@
     {
         window.taaDisableBtns();
 
-        jQuery( taa_ena ).addClass( "taa-d-none" );
-        jQuery( "#taa-new-acc-email" ).removeClass( "taa-error-border" );
-        jQuery( "#taa-new-acc-pass1" ).removeClass( "taa-error-border" );
-        jQuery( "#taa-new-acc-pass2" ).removeClass( "taa-error-border" );
+        $( taa_ena ).addClass( "taa-d-none" );
+        $( "#taa-new-acc-email" ).removeClass( "taa-error-border" );
+        $( "#taa-new-acc-pass1" ).removeClass( "taa-error-border" );
+        $( "#taa-new-acc-pass2" ).removeClass( "taa-error-border" );
 
-        const email = jQuery( "#taa-new-acc-email" ).val();
-        const pass1 = jQuery( "#taa-new-acc-pass1" ).val();
-        const pass2 = jQuery( "#taa-new-acc-pass2" ).val();
+        const email = $( "#taa-new-acc-email" ).val();
+        const pass1 = $( "#taa-new-acc-pass1" ).val();
+        const pass2 = $( "#taa-new-acc-pass2" ).val();
 
         if ( email == "" )
         {
             window.taaEnableBtns();
-            jQuery( taa_ena ).removeClass( "taa-d-none" ).html( "Informe um e-mail válido" );
-            jQuery( "#taa-new-acc-email" ).addClass( "taa-error-border" );
+            $( taa_ena ).removeClass( "taa-d-none" ).html( "Informe um e-mail válido" );
+            $( "#taa-new-acc-email" ).addClass( "taa-error-border" );
         }
         else if ( pass1 != pass2 || pass1.length < 8 || pass2.length < 8 )
         {
             window.taaEnableBtns();
-            jQuery( taa_ena ).removeClass( "taa-d-none" ).html( "As senhas devem ser idênticas e com 8 ou mais dígitos" );
-            jQuery( "#taa-new-acc-pass1" ).addClass( "taa-error-border" );
-            jQuery( "#taa-new-acc-pass2" ).addClass( "taa-error-border" );
+            $( taa_ena ).removeClass( "taa-d-none" ).html( "As senhas devem ser idênticas e com 8 ou mais dígitos" );
+            $( "#taa-new-acc-pass1" ).addClass( "taa-error-border" );
+            $( "#taa-new-acc-pass2" ).addClass( "taa-error-border" );
         }
         else
         {
-            jQuery.ajax({
+            $.ajax({
                 url : "/wp-admin/admin-ajax.php",
                 type: "POST",
                 data: {
@@ -169,28 +171,28 @@
     {
         window.taaDisableBtns();
 
-        jQuery( taa_eva ).addClass( "taa-d-none" );
-        jQuery( "#taa-validate-acc-email" ).removeClass( "taa-error-border" );
-        jQuery( "#taa-validate-acc-pass"  ).removeClass( "taa-error-border" );
+        $( taa_eva ).addClass( "taa-d-none" );
+        $( "#taa-validate-acc-email" ).removeClass( "taa-error-border" );
+        $( "#taa-validate-acc-pass"  ).removeClass( "taa-error-border" );
 
-        const email = jQuery( "#taa-validate-acc-email" ).val();
-        const pass  = jQuery( "#taa-validate-acc-pass"  ).val();
+        const email = $( "#taa-validate-acc-email" ).val();
+        const pass  = $( "#taa-validate-acc-pass"  ).val();
 
         if ( email == "" )
         {
             window.taaEnableBtns();
-            jQuery( taa_eva ).removeClass( "taa-d-none" ).html( "Informe um e-mail válido" );
-            jQuery( "#taa-validate-acc-email" ).addClass( "taa-error-border" );
+            $( taa_eva ).removeClass( "taa-d-none" ).html( "Informe um e-mail válido" );
+            $( "#taa-validate-acc-email" ).addClass( "taa-error-border" );
         }
         else if ( pass == "" )
         {
             window.taaEnableBtns();
-            jQuery( taa_eva ).removeClass( "taa-d-none" ).html( "Informe uma senha" );
-            jQuery( "#taa-validate-acc-pass" ).addClass( "taa-error-border" );
+            $( taa_eva ).removeClass( "taa-d-none" ).html( "Informe uma senha" );
+            $( "#taa-validate-acc-pass" ).addClass( "taa-error-border" );
         }
         else
         {
-            jQuery.ajax({
+            $.ajax({
                 url : "/wp-admin/admin-ajax.php",
                 type: "POST",
                 data: {
@@ -206,9 +208,9 @@
                     {
                         window.taaEnableBtns();
 
-                        jQuery( taa_eva ).removeClass( "taa-d-none" ).html( "E-mail e/ou senha incorreta" );
-                        jQuery( "#taa-validate-acc-email" ).addClass( "taa-error-border" );
-                        jQuery( "#taa-validate-acc-pass"  ).addClass( "taa-error-border" );
+                        $( taa_eva ).removeClass( "taa-d-none" ).html( "E-mail e/ou senha incorreta" );
+                        $( "#taa-validate-acc-email" ).addClass( "taa-error-border" );
+                        $( "#taa-validate-acc-pass"  ).addClass( "taa-error-border" );
                     }
                     else
                     {
@@ -254,20 +256,20 @@
     window.taaCloseModal = function ( e )
     {
         const id = e.id.replace("close", "modal");
-        jQuery( `#${id}` ).addClass( "taa-d-none" );
+        $( `#${id}` ).addClass( "taa-d-none" );
     }
 
     window.taaDisableBtns = function ()
     {
         [ taa_bna, taa_bnp, taa_bva, taa_bvc ].forEach( ( e ) => {
-            jQuery( e ).prop( "disabled", "disabled" ).find( "div" ).removeClass( "taa-d-none" );
+            $( e ).prop( "disabled", "disabled" ).find( "div" ).removeClass( "taa-d-none" );
         });
     }
 
     window.taaEnableBtns = function ()
     {
         [ taa_bna, taa_bnp, taa_bva, taa_bvc ].forEach( ( e ) => {
-            jQuery( e ).prop( "disabled", null ).find( "div" ).addClass( "taa-d-none" );
+            $( e ).prop( "disabled", null ).find( "div" ).addClass( "taa-d-none" );
         });
     }
 
@@ -277,4 +279,4 @@
         window.location.href = window.location.href.split( "?" )[0];
     }
 
-</script>
+} )( jQuery );
