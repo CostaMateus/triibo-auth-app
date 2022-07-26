@@ -21,7 +21,7 @@ class TAA_Triibo_Firebase
 	{
         /**
          * Verifica o ambiente que está
-         * $isDev = strpos(home_url(), "dev-");
+         * $isDev = strpos( home_url(), "dev-" );
          */
         if ( strpos( home_url(), "dev-" ) !== FALSE )
         {
@@ -61,39 +61,39 @@ class TAA_Triibo_Firebase
                 "channelId"      => TAA_CHANNEL_ID,
                 "sessionId"      => "001",
                 "transactionId"  => "002",
-                "channelTokenId" => $channelTokenId_1["success"]["newToken"]["channelTokenId"]
+                "channelTokenId" => $channelTokenId_1[ "success" ][ "newToken" ][ "channelTokenId" ]
             ],
             "linkedAccount" => NULL,
             "cellphone"     => $cellphone,
         ];
 
         // cria usuário se não existir e retorna as informações
-        $resp1       = self::exec_call("login", $registerUser);
+        $resp1       = self::exec_call( "login", $registerUser );
 
-        if ( ! $resp1["success"] ) return;
+        if ( ! $resp1[ "success" ] ) return;
 
-        $user        = $resp1["user"];
-        $uId         = $user["uId"];
-        $contactList = $user["contactList"];
+        $user        = $resp1[ "user" ];
+        $uId         = $user[ "uId" ];
+        $contactList = $user[ "contactList" ];
 
-        switch ($action) {
+        switch ( $action ) {
             case "ADD":
                 array_push( $contactList, [
                     "type"     => "emailMarketplace",
                     "value"    => $email,
                     "verified" => true
-                ]);
+                ] );
             break;
 
             case "UPDATE":
-                $id = array_search("email", array_column($contactList, "type"));
-                $contactList[$id]["verified"] = true;
+                $id = array_search( "email", array_column( $contactList, "type" ) );
+                $contactList[ $id ][ "verified" ] = true;
 
                 array_push( $contactList, [
                     "type"     => "emailMarketplace",
                     "value"    => $email,
                     "verified" => true
-                ]);
+                ] );
             break;
 
             case "CREATE":
@@ -101,12 +101,12 @@ class TAA_Triibo_Firebase
                     "type"     => "email",
                     "value"    => $email,
                     "verified" => true
-                ]);
+                ] );
                 array_push( $contactList, [
                     "type"     => "emailMarketplace",
                     "value"    => $email,
                     "verified" => true
-                ]);
+                ] );
             break;
         }
 
@@ -119,24 +119,24 @@ class TAA_Triibo_Firebase
                 "channelId"      => TAL_CHANNEL_ID,
                 "sessionId"      => "001",
                 "transactionId"  => "002",
-                "channelTokenId" => $channelTokenId_2["success"]["newToken"]["channelTokenId"],
+                "channelTokenId" => $channelTokenId_2[ "success" ][ "newToken" ][ "channelTokenId" ],
                 "uId"            => $uId
             ],
-            "queryPartnerAPI" => [ "setUserInfo" ],
+            "queryPartnerAPI" => [  "setUserInfo" ],
             "userInfo"        => [
                 "syncType"    => "merge",
                 "uId"         => $uId,
-                "contactList" => [ ... $contactList ],
+                "contactList" => [  ... $contactList ],
             ],
         ];
 
         // atualiza informações do usuario
-        $resp2 = self::exec_call("setUserInfo_v1", $setUserInfo);
+        $resp2 = self::exec_call( "setUserInfo_v1", $setUserInfo );
 
-        if ( ! $resp2["success"] )
+        if ( ! $resp2[ "success" ] )
         {
-            $data  = PHP_EOL . "[" . date("Y-m-d H:i:s") . "] PRODUCTION.ERROR ";
-            $data .= "Sync failed: " . json_encode($resp2, TRUE);
+            $data  = PHP_EOL . "[ " . date( "Y-m-d H:i:s" ) . " ] PRODUCTION.ERROR ";
+            $data .= "Sync failed: " . json_encode( $resp2, TRUE );
 
             file_put_contents( TAA_dir . "taa.log", $data, FILE_APPEND );
         }
@@ -165,7 +165,7 @@ class TAA_Triibo_Firebase
             ],
         ];
 
-        return self::exec_call("getChannelToken_v1", $token_triiboHeader);
+        return self::exec_call( "getChannelToken_v1", $token_triiboHeader );
     }
 
     /**
@@ -181,7 +181,7 @@ class TAA_Triibo_Firebase
     /**
      * Executa chamadas ao Firebase
      */
-    private static function exec_call($api, $params)
+    private static function exec_call( $api, $params )
     {
         $ch = curl_init();
 
@@ -194,9 +194,9 @@ class TAA_Triibo_Firebase
 			CURLOPT_SSL_VERIFYPEER => FALSE ,
 			CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
 			CURLOPT_CUSTOMREQUEST  => "POST",
-			CURLOPT_HTTPHEADER     => [ "Content-type: application/json" ],
+			CURLOPT_HTTPHEADER     => [  "Content-type: application/json" ],
             CURLOPT_POSTFIELDS     => json_encode( $params )
-        ]);
+        ] );
 
         $result = curl_exec( $ch );
         curl_close( $ch );

@@ -36,8 +36,8 @@ class TAA_Triibo_Auth_App
             "message" => "Error"
         ];
 
-        $code      = $_POST["code"];
-        $email     = $_POST["email"];
+        $code      = $_POST[ "code" ];
+        $email     = $_POST[ "email" ];
 
         $sent_code = get_transient( "_taa_triibo_code" );
         delete_transient( "_taa_triibo_code" );
@@ -57,7 +57,7 @@ class TAA_Triibo_Auth_App
                     // passo 13
 					update_user_meta( $user_id, "triiboId_phone", "+$cellphone" );
 
-					// passo 14 (passo_comum)
+					// passo 14 ( passo_comum )
                     TAA_Triibo_Firebase::update_user_triibo( $cellphone, $email, "UPDATE" );
                     self::make_login( $user_id );
 
@@ -106,16 +106,16 @@ class TAA_Triibo_Auth_App
             "message" => "Error"
         ];
 
-        $email     = $_POST["email"];
-        $pass      = $_POST["pass"];
+        $email     = $_POST[ "email" ];
+        $pass      = $_POST[ "pass" ];
 
-        $name      = explode("@", $email)[0];
+        $name      = explode( "@", $email )[ 0 ];
 
         $cellphone = get_transient( "_taa_triibo_cellphone" );
         delete_transient( "_taa_triibo_cellphone" );
 
         // passo 18
-        $user_id   = wp_insert_user([
+        $user_id   = wp_insert_user( [
             "user_login"    => $email,
             "user_pass"     => wp_hash_password( "Triibo2022" ),
             "user_nicename" => $name,
@@ -124,7 +124,7 @@ class TAA_Triibo_Auth_App
             "nickname"      => $name,
             "first_name"    => $name,
             "last_name"     => "",
-        ]);
+        ] );
 
         if ( ! is_wp_error( $user_id ) )
         {
@@ -138,7 +138,7 @@ class TAA_Triibo_Auth_App
             $user->set_role( "subscriber" );
             if ( class_exists( "WooCommerce" ) ) $user->set_role( "customer" );
 
-            // passo 20 (passo_comum)
+            // passo 20 ( passo_comum )
             TAA_Triibo_Firebase::update_user_triibo( $cellphone, $email, "UPDATE" );
             self::make_login( $user_id );
 
@@ -169,8 +169,8 @@ class TAA_Triibo_Auth_App
             "message" => "Error"
         ];
 
-        $email     = $_POST["email"];
-        $pass      = $_POST["pass"];
+        $email     = $_POST[ "email" ];
+        $pass      = $_POST[ "pass" ];
 
         $cellphone = get_transient( "_taa_triibo_cellphone" );
         delete_transient( "_taa_triibo_cellphone" );
@@ -189,7 +189,7 @@ class TAA_Triibo_Auth_App
         {
             if ( $user && wp_check_password( $pass, $user->data->user_pass, $user->ID ) )
             {
-                // passo 28 (passo_comum)
+                // passo 28 ( passo_comum )
                 TAA_Triibo_Firebase::update_user_triibo( $cellphone, $email, "CREATE" );
                 self::make_login( $user->ID );
 
@@ -215,7 +215,7 @@ class TAA_Triibo_Auth_App
 
 	private static function make_login( int $user_id )
 	{
-		clean_user_cache($user_id);
+		clean_user_cache( $user_id );
 		wp_clear_auth_cookie();
 		wp_set_current_user( $user_id );
 		wp_set_auth_cookie( $user_id, true );

@@ -59,7 +59,7 @@
 
         if ( code != "" && code.length == 6 )
         {
-            $.ajax({
+            $.ajax( {
                 url : "/wp-admin/admin-ajax.php",
                 type: "POST",
                 data: {
@@ -80,10 +80,10 @@
                     }
                     else
                     {
-                        switch (result.code)
+                        switch ( result.code )
                         {
                             case 2000:
-                                window.location.href = window.location.href.split( "?" )[0];
+                                window.location.href = window.location.href.split( "?" )[ 0 ];
                             break;
 
                             case 2001:
@@ -98,7 +98,7 @@
                 error: function( err ) {
                     window.taaAjaxError( err );
                 }
-            });
+            } );
         }
         else
         {
@@ -139,7 +139,7 @@
         }
         else
         {
-            $.ajax({
+            $.ajax( {
                 url : "/wp-admin/admin-ajax.php",
                 type: "POST",
                 data: {
@@ -157,13 +157,13 @@
                     }
                     else
                     {
-                        window.location.href = window.location.href.split( "?" )[0];
+                        window.location.href = window.location.href.split( "?" )[ 0 ];
                     }
                 },
                 error: function( err ) {
                     window.taaAjaxError( err );
                 }
-            });
+            } );
         }
     }
 
@@ -192,7 +192,7 @@
         }
         else
         {
-            $.ajax({
+            $.ajax( {
                 url : "/wp-admin/admin-ajax.php",
                 type: "POST",
                 data: {
@@ -214,13 +214,13 @@
                     }
                     else
                     {
-                        window.location.href = window.location.href.split( "?" )[0];
+                        window.location.href = window.location.href.split( "?" )[ 0 ];
                     }
                 },
                 error: function( err ) {
                     window.taaAjaxError( err );
                 }
-            });
+            } );
         }
     }
 
@@ -245,7 +245,7 @@
             break;
         }
 
-    }, false);
+    }, false );
 
 
 
@@ -255,7 +255,7 @@
 
     window.taaCloseModal = function ( e )
     {
-        const id = e.id.replace("close", "modal");
+        const id = e.id.replace( "close", "modal" );
         $( `#${id}` ).addClass( "taa-d-none" );
     }
 
@@ -263,20 +263,20 @@
     {
         [ taa_bna, taa_bnp, taa_bva, taa_bvc ].forEach( ( e ) => {
             $( e ).prop( "disabled", "disabled" ).find( "div" ).removeClass( "taa-d-none" );
-        });
+        } );
     }
 
     window.taaEnableBtns = function ()
     {
         [ taa_bna, taa_bnp, taa_bva, taa_bvc ].forEach( ( e ) => {
             $( e ).prop( "disabled", null ).find( "div" ).addClass( "taa-d-none" );
-        });
+        } );
     }
 
     window.taaAjaxError = function ( err )
     {
         console.log( err );
-        window.location.href = window.location.href.split( "?" )[0];
+        window.location.href = window.location.href.split( "?" )[ 0 ];
     }
 
 } )( jQuery );

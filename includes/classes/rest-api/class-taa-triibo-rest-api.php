@@ -17,11 +17,11 @@ class TAA_Triibo_Rest_Api
 	/**
 	 * Initialize the plugin public actions.
 	 */
-    public function __construct()
+    public function __construct( )
 	{
-        $env = ( strpos( home_url(), "dev-" ) !== FALSE ) ? "dev" : "prod";
+        $env = ( strpos( home_url( ), "dev-" ) !== FALSE ) ? "dev" : "prod";
 
-        self::includes();
+        self::includes( );
 
         add_action( "rest_api_init", array( $this, "register_rest_routes" ) );
     }
@@ -29,7 +29,7 @@ class TAA_Triibo_Rest_Api
 	/**
 	 * Includes.
 	 */
-	private static function includes()
+	private static function includes( )
     {
 		include_once dirname( __FILE__ ) . "/Controllers/Version1/class-taa-triibo-rest-users-controller.php";
     }
@@ -38,14 +38,14 @@ class TAA_Triibo_Rest_Api
     /**
      * Register REST API routes.
      */
-    public function register_rest_routes()
+    public function register_rest_routes( )
     {
-        foreach ( self::get_rest_namespaces() as $controllers )
+        foreach ( self::get_rest_namespaces( ) as $controllers )
         {
             foreach ( $controllers as $controller_class )
             {
-                $controller = new $controller_class();
-                $controller->register_routes();
+                $controller = new $controller_class( );
+                $controller->register_routes( );
             }
         }
     }
@@ -55,7 +55,7 @@ class TAA_Triibo_Rest_Api
      *
      * @return array List of Namespaces and Main controller classes.
      */
-    private static function get_rest_namespaces()
+    private static function get_rest_namespaces( )
     {
         return apply_filters(
             "triibo_rest_api_namespaces",
@@ -69,4 +69,4 @@ class TAA_Triibo_Rest_Api
 
 }
 
-new TAA_Triibo_Rest_Api();
+new TAA_Triibo_Rest_Api( );
