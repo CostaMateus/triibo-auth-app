@@ -203,7 +203,10 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 	{
 		if ( $url )
 		{
-			$url .= $params ? "?$params" : "";
+			if ( ( strpos( $url, "?" ) ) !== false && $params )
+				$url .= "&$params";
+			elseif ( $params )
+				$url .= "?$params";
 		}
 		else
 		{
