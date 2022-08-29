@@ -87,9 +87,17 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 		{
 			$bearer = $request->get_header( "authorization" );
 
-			if ( ! $bearer ) self::redirect( $url );
+			if ( ! $bearer )
+			{
+				$this->log->add( $this->id, "Bearer Token ausente" );
+				self::redirect( $url );
+			}
 
-			if ( ! $this->validate_token( $bearer ) ) self::redirect( $url );
+			if ( ! $this->validate_token( $bearer ) )
+			{
+				$this->log->add( $this->id, "Bearer Token invalido" );
+				self::redirect( $url );
+			}
 		}
 
 		$cellphone = $request->get_param( "cellphone" ) ?: null;
@@ -265,15 +273,22 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 		return "https://api" . self::get_env( ) . ".triibo.com.br";
 	}
 
+	private static function is_prod()
+	{
+		return ( empty( self::get_env() ) ) ? true : false;
+	}
+
 	private function validate_token( string $bearer )
 	{
 		$ch      = curl_init( );
 
+		$api_key = ( self::is_prod() ) ? "652e0505-f010-48a4-a9a5-ce12783777ea" : "652e0505-f010-48a4-a9a5-ce12783777ea";
+
 		$headers = [
 			"Origin: " . self::get_url( ),
-			"Authorization: " . $bearer,
+			"Authorization: $bearer",
 			"Content-type: application/json",
-			"x-api-key: 652e0505-f010-48a4-a9a5-ce12783777ea"
+			"x-api-key: $api_key"
 		];
 
 		curl_setopt_array( $ch, [
