@@ -11,7 +11,7 @@
                 <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide mb-0">
                     <input id="taa-email" type="hidden" name="email" />
                     <input id="taa-code" type="text" class="woocommerce-Input woocommerce-Input--text input-text taa-mb-0" maxlength="6"
-                           name="code" placeholder="Código" pattern="[0-9]{6}" title="O código tem seis (6) números" required autofocus />
+                           name="code" placeholder="Código" pattern="[0-9]{6}" title="O código tem seis (6) números" required />
 
                     <!-- Error message -->
                     <p id="taa-error-validate-code" class="taa-bg-transp taa-text-center taa-text-danger taa-pt-8            taa-mb-0 taa-d-none" ></p>

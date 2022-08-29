@@ -10,7 +10,7 @@
 
                 <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide taa-mb-0">
                     <input id="taa-validate-acc-email" type="email" name="taa-email" class="woocommerce-Input woocommerce-Input--text input-text taa-mb-15"
-                           placeholder="E-mail" required autofocus />
+                           placeholder="E-mail" required />
                     <input id="taa-validate-acc-pass" type="password" name="taa-pass" class="woocommerce-Input woocommerce-Input--text input-text taa-mb-0"
                            placeholder="Senha" pattern=".{8,}" title="A senha deve ter no mínimo 8 dígitos" required />
 
