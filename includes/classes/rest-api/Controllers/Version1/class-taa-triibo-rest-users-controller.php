@@ -282,7 +282,7 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 	{
 		$ch      = curl_init( );
 
-		$api_key = ( self::is_prod() ) ? "652e0505-f010-48a4-a9a5-ce12783777ea" : "652e0505-f010-48a4-a9a5-ce12783777ea";
+		$api_key = ( self::is_prod() ) ? "xp8bqzil-b15e-da2v-3jcm-25pniix0y859" : "652e0505-f010-48a4-a9a5-ce12783777ea";
 
 		$headers = [
 			"Origin: " . self::get_url( ),
