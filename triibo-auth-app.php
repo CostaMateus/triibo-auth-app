@@ -4,7 +4,7 @@
  * Description:          Loga o usuário oriundo do Triibo App. Depende do WooCommerce.
  * Author:               Mateus Costa
  * Author URI:           https://costamateus.com.br/
- * Version:              1.1.0
+ * Version:              1.2.0
  * Text Domain:          triibo-auth-app
  * WC requires at least: 3.6
  * WC tested up to:      5.8

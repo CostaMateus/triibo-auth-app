@@ -7,7 +7,7 @@
  *
  * @package Taa_Triibo_Rest_Api/Users
  * @since   1.0.0
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 defined( "ABSPATH" ) || exit;
@@ -38,40 +38,34 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 	 *
 	 * @var array
 	 */
-	protected $request = array( );
+	protected $request = array();
 
 	protected $log;
 
 	protected $id = "triibo_auth_app";
 
-	public function __construct( )
+	public function __construct()
 	{
-		$this->log = ( function_exists( "wc_get_logger" ) ) ? wc_get_logger( ) : new WC_Logger( );
+		$this->log = ( function_exists( "wc_get_logger" ) ) ? wc_get_logger() : new WC_Logger();
 	}
 
 	/**
 	 * Register the routes for users.
 	 */
-	public function register_routes( )
+	public function register_routes()
 	{
 		register_rest_route(
 			$this->namespace,
 			"/$this->rest_base/login",
 			array(
-				// "args" => array(
-				// 	"cellphone" => array(
-				// 		"description" => "user cell phone",
-				// 		"type"        => "integer",
-				// 	 ),
-				// ),
 				array(
 					"methods"             => WP_REST_Server::READABLE, // WP_REST_Server::EDITABLE, // POST, PUT, PATCH
 					"callback"            => array( $this, "get_item" ),
 					"permission_callback" => array( $this, "get_item_permissions_check" ),
-					"args"                => $this->get_collection_params( ),
-				 ),
-			 )
-		 );
+					"args"                => $this->get_collection_params(),
+				),
+			)
+		);
 	}
 
 	public function get_item_permissions_check( $request )
@@ -81,21 +75,28 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 
 	public function get_item( $request )
 	{
-		$url    = $request->get_param( "url" ) ?: null;
+		$url = $request->get_param( "url" ) ?: null;
+		$tkn = $request->get_param( "mkt" ) ?: null;
 
-		if ( strpos( home_url( ), "dev-" ) === FALSE )
+		if ( strpos( home_url(), "dev-" ) === FALSE )
 		{
 			$bearer = $request->get_header( "authorization" );
 
-			if ( ! $bearer )
+			/**
+			 * ios     - manda apenas bearer
+			 * android - manda apenas token
+			 *
+			 * ausencia dos dois é problema
+			 */
+			if ( ! $bearer && ! $tkn )
 			{
-				$this->log->add( $this->id, "Bearer Token ausente" );
+				$this->log->add( $this->id, "Bearer Token ausente | $url" );
 				self::redirect( $url );
 			}
 
-			if ( ! $this->validate_token( $bearer ) )
+			if ( ! $this->validate_token( $bearer, $tkn ) )
 			{
-				$this->log->add( $this->id, "Bearer Token invalido" );
+				$this->log->add( $this->id, "Bearer Token invalido | $url" );
 				self::redirect( $url );
 			}
 		}
@@ -202,7 +203,7 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 		}
 		else
 		{
-			wp_clear_auth_cookie( );
+			wp_clear_auth_cookie();
 			self::redirect( $url );
 		}
 	}
@@ -218,11 +219,11 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 		}
 		else
 		{
-			$url  = home_url( );
+			$url  = home_url();
 		}
 
 		wp_safe_redirect( esc_url_raw( $url ) );
-		exit( );
+		exit();
 	}
 
 	private static function send_email_code( string $email )
@@ -249,7 +250,7 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 	private static function make_login( int $user_id, string $url )
 	{
 		clean_user_cache( $user_id );
-		wp_clear_auth_cookie( );
+		wp_clear_auth_cookie();
 		wp_set_current_user( $user_id );
 		wp_set_auth_cookie( $user_id, true );
 		self::redirect( $url );
@@ -258,19 +259,19 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 	private static function get_env( $mkt = null )
 	{
 		if ( $mkt )
-			return ( ( strpos( home_url( ), "dev-" ) !== FALSE ) ? "dev-" : "" );
+			return ( ( strpos( home_url(), "dev-" ) !== FALSE ) ? "dev-" : "" );
 		else
-			return ( ( strpos( home_url( ), "dev-" ) !== FALSE ) ? "-hml" : "" );
+			return ( ( strpos( home_url(), "dev-" ) !== FALSE ) ? "-hml" : "" );
 	}
 
-	private static function get_url( )
+	private static function get_url()
 	{
 		return "https://" . self::get_env( true ) . "marketplace.triibo.com.br";
 	}
 
-	private static function get_api_url( )
+	private static function get_api_url()
 	{
-		return "https://api" . self::get_env( ) . ".triibo.com.br";
+		return "https://api" . self::get_env() . ".triibo.com.br";
 	}
 
 	private static function is_prod()
@@ -278,21 +279,23 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 		return ( empty( self::get_env() ) ) ? true : false;
 	}
 
-	private function validate_token( string $bearer )
+	private function validate_token( string $bearer, string $tkn = null )
 	{
-		$ch      = curl_init( );
+		$bearer  = ( ! $bearer && $tkn ) ? base64_decode( $tkn ) : $bearer;
+
+		$ch      = curl_init();
 
 		$api_key = ( self::is_prod() ) ? "xp8bqzil-b15e-da2v-3jcm-25pniix0y859" : "652e0505-f010-48a4-a9a5-ce12783777ea";
 
 		$headers = [
-			"Origin: " . self::get_url( ),
+			"Origin: " . self::get_url(),
 			"Authorization: $bearer",
 			"Content-type: application/json",
 			"x-api-key: $api_key"
 		];
 
 		curl_setopt_array( $ch, [
-			CURLOPT_URL            => self::get_api_url( ) . "/auth/marketplace",
+			CURLOPT_URL            => self::get_api_url() . "/auth/marketplace",
 			CURLOPT_RETURNTRANSFER => TRUE,
 			CURLOPT_ENCODING       => "",
 			CURLOPT_MAXREDIRS      => 10,
