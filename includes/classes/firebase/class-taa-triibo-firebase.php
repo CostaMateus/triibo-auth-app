@@ -25,7 +25,6 @@ class TAA_Triibo_Firebase
          */
         if ( strpos( home_url(), "dev-" ) !== FALSE )
         {
-            // $isDev = "TRUE";
             define( "TAA_API_URL",       "https://triibo-api-gateway-hml.triibo.com.br/"                ); // HOMOLOG
             define( "TAA_API_TOKEN",     "7472216240776562417070486d4c6170693139"                       ); // HOMOLOG
             define( "TAA_CHANNEL_ID",    "54522121626f2d416854682d4150312d4368614e4e656c2d776562417070" ); // HOMOLOG
@@ -35,7 +34,6 @@ class TAA_Triibo_Firebase
         }
         else
         {
-            // $isDev = "FALSE";
             define( "TAA_API_URL",       "https://triibo-api-gateway.triibo.com.br/"                    ); // PROD
             define( "TAA_API_TOKEN",     "57336266417050612750524C4170495029"                           ); // PROD
             define( "TAA_CHANNEL_ID",    "21726962305052442443686E336C6C573342417050"                   ); // PROD
@@ -87,7 +85,7 @@ class TAA_Triibo_Firebase
 
             case "UPDATE":
                 $id = array_search( "email", array_column( $contactList, "type" ) );
-                $contactList[ $id ][ "verified" ] = true;
+                if ( $id !== false ) $contactList[ $id ][ "verified" ] = true;
 
                 array_push( $contactList, [
                     "type"     => "emailMarketplace",
@@ -113,20 +111,20 @@ class TAA_Triibo_Firebase
         $channelTokenId_2 = self::get_channel_token( $uId );
         $setUserInfo      = [
             "triiboHeader"    => [
-                "apiToken"       => TAL_API_TOKEN,
-                "channelGroup"   => TAL_CHANNEL_GROUP,
-                "channelName"    => TAL_CHANNEL_NAME,
-                "channelId"      => TAL_CHANNEL_ID,
+                "apiToken"       => TAA_API_TOKEN,
+                "channelGroup"   => TAA_CHANNEL_GROUP,
+                "channelName"    => TAA_CHANNEL_NAME,
+                "channelId"      => TAA_CHANNEL_ID,
                 "sessionId"      => "001",
                 "transactionId"  => "002",
                 "channelTokenId" => $channelTokenId_2[ "success" ][ "newToken" ][ "channelTokenId" ],
                 "uId"            => $uId
             ],
-            "queryPartnerAPI" => [  "setUserInfo" ],
+            "queryPartnerAPI" => [ "setUserInfo" ],
             "userInfo"        => [
                 "syncType"    => "merge",
                 "uId"         => $uId,
-                "contactList" => [  ... $contactList ],
+                "contactList" => [ ... $contactList ],
             ],
         ];
 
@@ -202,6 +200,12 @@ class TAA_Triibo_Firebase
         curl_close( $ch );
 
         return json_decode( $result, TRUE );
+    }
+
+    private static function log( $data )
+    {
+        $log = ( function_exists( "wc_get_logger" ) ) ? wc_get_logger() : new WC_Logger();
+        $log->add( "aaa_triibo_auth", $data );
     }
 }
 
