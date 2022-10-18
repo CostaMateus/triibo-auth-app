@@ -88,17 +88,8 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 			 *
 			 * ausencia dos dois é problema
 			 */
-			if ( ! $bearer && ! $tkn )
-			{
-				$this->log->add( $this->id, "Bearer Token ausente | $url" );
-				self::redirect( $url );
-			}
-
-			if ( ! $this->validate_token( $bearer, $tkn ) )
-			{
-				$this->log->add( $this->id, "Bearer Token invalido | $url" );
-				self::redirect( $url );
-			}
+			if ( ! $bearer && ! $tkn ) self::redirect( $url );
+			if ( ! $this->validate_token( $bearer, $tkn ) ) self::redirect( $url );
 		}
 
 		$cellphone = $request->get_param( "cellphone" ) ?: null;

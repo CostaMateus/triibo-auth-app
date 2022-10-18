@@ -201,12 +201,6 @@ class TAA_Triibo_Firebase
 
         return json_decode( $result, TRUE );
     }
-
-    private static function log( $data )
-    {
-        $log = ( function_exists( "wc_get_logger" ) ) ? wc_get_logger() : new WC_Logger();
-        $log->add( "aaa_triibo_auth", $data );
-    }
 }
 
 new TAA_Triibo_Firebase();
