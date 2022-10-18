@@ -121,7 +121,7 @@ class TAA_Triibo_Auth_App
             {
                 add_user_meta( $user->ID, "triiboId_phone", "+$cellphone" );
 
-                // TAA_Triibo_Firebase::update_user_triibo( $cellphone, $email, "CREATE" );
+                TAA_Triibo_Firebase::update_user_triibo( $cellphone, $email, "CREATE" );
                 self::make_login( $user->ID );
 
                 $result = [
