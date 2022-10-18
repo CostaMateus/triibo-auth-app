@@ -107,54 +107,84 @@ class TAA_Triibo_Auth_App
         ];
 
         $email     = $_POST[ "email" ];
-        $pass      = $_POST[ "pass" ];
-
-        $name      = explode( "@", $email )[ 0 ];
+        $pass      = $_POST[ "pass"  ];
 
         $cellphone = get_transient( "_taa_triibo_cellphone" );
         delete_transient( "_taa_triibo_cellphone" );
 
-        // passo 18
-        $user_id   = wp_insert_user( [
-            "user_login"    => $email,
-            "user_pass"     => wp_hash_password( "Triibo2022" ),
-            "user_nicename" => $name,
-            "user_email"    => $email,
-            "display_name"  => $name,
-            "nickname"      => $name,
-            "first_name"    => $name,
-            "last_name"     => "",
-        ] );
+        $user      = get_user_by( "email", $email );
 
-        if ( ! is_wp_error( $user_id ) )
+        // valida se conta existe e se a senha está correta
+        if ( $user )
         {
-            wp_set_password( $pass, $user_id );
+            if ( wp_check_password( $pass, $user->data->user_pass, $user->ID ) )
+            {
+                add_user_meta( $user->ID, "triiboId_phone", "+$cellphone" );
 
-            // passo 19
-            add_user_meta( $user_id, "triiboId_phone", "+$cellphone" );
+                // TAA_Triibo_Firebase::update_user_triibo( $cellphone, $email, "CREATE" );
+                self::make_login( $user->ID );
 
-            $user = get_user_by( "id", $user_id );
-
-            $user->set_role( "subscriber" );
-            if ( class_exists( "WooCommerce" ) ) $user->set_role( "customer" );
-
-            // passo 20 ( passo_comum )
-            TAA_Triibo_Firebase::update_user_triibo( $cellphone, $email, "UPDATE" );
-            self::make_login( $user_id );
-
-            $result = [
-                "code"    => 2000,
-                "error"   => null,
-                "message" => "Conta criada"
-            ];
+                $result = [
+                    "code"    => 2000,
+                    "error"   => null,
+                    "message" => "Usuário conectado"
+                ];
+            }
+            else
+            {
+                $result = [
+                    "code"    => 4001,
+                    "error"   => true,
+                    "message" => "E-mail e/ou senha incorreta"
+                ];
+            }
         }
         else
         {
-            $result = [
-                "code"    => 5000,
-                "error"   => true,
-                "message" => "Falha na criação da conta"
-            ];
+            $name    = explode( "@", $email )[ 0 ];
+
+            // passo 18
+            $user_id = wp_insert_user( [
+                "user_login"    => $email,
+                "user_pass"     => wp_hash_password( "Triibo" . date( "Y" ) . "@!#" ),
+                "user_nicename" => $name,
+                "user_email"    => $email,
+                "display_name"  => $name,
+                "nickname"      => $name,
+                "first_name"    => $name,
+                "last_name"     => "",
+            ] );
+
+            if ( ! is_wp_error( $user_id ) )
+            {
+                wp_set_password( $pass, $user_id );
+
+                // passo 19
+                add_user_meta( $user_id, "triiboId_phone", "+$cellphone" );
+
+                $user = get_user_by( "id", $user_id );
+
+                $user->set_role( "subscriber" );
+                if ( class_exists( "WooCommerce" ) ) $user->set_role( "customer" );
+
+                // passo 20 ( passo_comum )
+                TAA_Triibo_Firebase::update_user_triibo( $cellphone, $email, "UPDATE" );
+                self::make_login( $user_id );
+
+                $result = [
+                    "code"    => 2000,
+                    "error"   => null,
+                    "message" => "Conta criada"
+                ];
+            }
+            else
+            {
+                $result = [
+                    "code"    => 5000,
+                    "error"   => true,
+                    "message" => "Falha na criação da conta"
+                ];
+            }
         }
 
         echo json_encode( $result );
