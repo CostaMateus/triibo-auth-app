@@ -83,7 +83,7 @@
                         switch ( result.code )
                         {
                             case 2000:
-                                window.location.href = window.location.href.split( "?" )[ 0 ];
+                                window.taaRefresh();
                             break;
 
                             case 2001:
@@ -118,11 +118,9 @@
         $( taa_ena ).addClass( "taa-d-none" );
         $( "#taa-new-acc-email" ).removeClass( "taa-error-border" );
         $( "#taa-new-acc-pass1" ).removeClass( "taa-error-border" );
-        $( "#taa-new-acc-pass2" ).removeClass( "taa-error-border" );
 
         const email = $( "#taa-new-acc-email" ).val();
         const pass1 = $( "#taa-new-acc-pass1" ).val();
-        const pass2 = $( "#taa-new-acc-pass2" ).val();
 
         if ( email == "" )
         {
@@ -130,12 +128,11 @@
             $( taa_ena ).removeClass( "taa-d-none" ).html( "Informe um e-mail válido" );
             $( "#taa-new-acc-email" ).addClass( "taa-error-border" );
         }
-        else if ( pass1 != pass2 || pass1.length < 8 || pass2.length < 8 )
+        else if ( pass1 == "" )
         {
             window.taaEnableBtns();
-            $( taa_ena ).removeClass( "taa-d-none" ).html( "As senhas devem ser idênticas e com 8 ou mais dígitos" );
+            $( taa_ena ).removeClass( "taa-d-none" ).html( "Informe uma senha" );
             $( "#taa-new-acc-pass1" ).addClass( "taa-error-border" );
-            $( "#taa-new-acc-pass2" ).addClass( "taa-error-border" );
         }
         else
         {
@@ -153,11 +150,16 @@
 
                     if ( result.error )
                     {
-                        window.taaAjaxError( err );
+                        window.taaEnableBtns();
+
+                        $( taa_ena ).removeClass( "taa-d-none" ).html( result.message );
+                        $( "#taa-code" ).addClass( "taa-error-border" );
+                        $( "#taa-new-acc-email" ).addClass( "taa-error-border" );
+                        $( "#taa-new-acc-pass1" ).addClass( "taa-error-border" );
                     }
                     else
                     {
-                        window.location.href = window.location.href.split( "?" )[ 0 ];
+                        window.taaRefresh();
                     }
                 },
                 error: function( err ) {
@@ -214,7 +216,7 @@
                     }
                     else
                     {
-                        window.location.href = window.location.href.split( "?" )[ 0 ];
+                        window.taaRefresh();
                     }
                 },
                 error: function( err ) {
@@ -276,7 +278,15 @@
     window.taaAjaxError = function ( err )
     {
         console.log( err );
-        window.location.href = window.location.href.split( "?" )[ 0 ];
+        window.taaRefresh();
+    }
+
+    window.taaRefresh = function ()
+    {
+        let url = new URL( window.location.href );
+        url.searchParams.delete( "taac"  );
+        url.searchParams.delete( "email" );
+        window.location.href = url.toString();
     }
 
 } )( jQuery );
