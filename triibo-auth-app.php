@@ -14,7 +14,7 @@
 
 defined( "ABSPATH" ) || exit;
 
-if ( ! is_plugin_active( "woocommerce/woocommerce.php" ) ) exit;
+if ( !in_array( "woocommerce/woocommerce.php", apply_filters( "active_plugins", get_option( "active_plugins" ) ) ) ) return;
 
 
 // init class auth-app
