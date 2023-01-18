@@ -72,6 +72,50 @@
     line-height: 53px;
 }
 
+#taa-modal-validate-account button,
+#taa-modal-validate-code button,
+#taa-modal-new-account button {
+    width: 100%;
+    font-size: 16px;
+    margin-top: 20px;
+    border-radius: 3px;
+    height: 53px;
+    line-height: 53px;
+    background-color: var(--mf-background-primary-color);
+    color: var(--mf-background-primary-text-color);
+    padding: 0 25px;
+    transition: all 0.5s;
+    font-weight: 600;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    text-decoration: none;
+    overflow: visible;
+    left: auto;
+    display: inline-block;
+    background-image: none;
+    box-shadow: none;
+    text-shadow: none;
+}
+#taa-modal-validate-account .input-text,
+#taa-modal-validate-code .input-text,
+#taa-modal-new-account .input-text {
+    padding: 14px 16px;
+    text-align: left;
+    background-color: transparent;
+    border: 1px solid #d9d9d9;
+    border-radius: 3px;
+    color: #000;
+    font-weight: 400;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    outline: 0;
+    line-height: normal;
+    min-width: inherit;
+}
+
 @media (min-width: 576px) { .taa-bg-modal-child { width: 60%;       } }
 @media (min-width: 768px) { .taa-bg-modal-child { width: 40%;       } }
 @media (min-width: 992px) { .taa-bg-modal-child { max-width: 430px; } }

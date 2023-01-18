@@ -55,7 +55,7 @@ function TAA_add_parts( )
 
 	// create my own version codes
 	$js_path  = "includes/assets/script.js";
-	$css_path = "includes/assets/style.css";
+	$css_path = "includes/assets/style1.css";
 
 	$js_ver   = date( "ymd-His", filemtime( plugin_dir_path( __FILE__ ) . $js_path  ) );
 	$css_ver  = date( "ymd-His", filemtime( plugin_dir_path( __FILE__ ) . $css_path ) );
