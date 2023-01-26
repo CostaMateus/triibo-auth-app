@@ -78,7 +78,7 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 		$url = $request->get_param( "url" ) ?: null;
 		$tkn = $request->get_param( "mkt" ) ?: null;
 
-		if ( strpos( home_url(), "dev-" ) === FALSE )
+		if ( !self::checkHost() )
 		{
 			$bearer = $request->get_header( "authorization" );
 
@@ -101,6 +101,8 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 		$params    = null;
 
 		$this->log->add( $this->id, "==================================" );
+		$this->log->add( $this->id, "==================================" );
+		$this->log->add( $this->id, "==================================" );
 		$this->log->add( $this->id, json_encode( [ $cellphone, $data ] ) );
 
 		// celular e email ausentes na request
@@ -122,7 +124,7 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 				// passo 4
 				$user_id = email_exists( $email );
 
-				$this->log->add( $this->id, "C1 - MKT user found and verified: +{$cellphone}" );
+				$this->log->add( $this->id, "C1 - MKT user found and verified: +$cellphone" );
 
 				// passo 5 ( passo_comum )
 				self::make_login( $user_id, $url );
@@ -137,12 +139,12 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 				if ( $user_id && $verified )
 				{
 					// passo 9
-					update_user_meta( $user_id, "triiboId_phone", "+{$cellphone}" );
+					update_user_meta( $user_id, "triiboId_phone", "+$cellphone" );
 
 					// passo 10 ( passo_comum )
 					TAA_TRIIBO_Firebase::update_user_triibo( $cellphone, $email, "ADD" );
 
-					$this->log->add( $this->id, "C2 - MKT user found and verified: +{$cellphone}" );
+					$this->log->add( $this->id, "C2 - MKT user found and verified: +$cellphone" );
 
 					self::make_login( $user_id, $url );
 				}
@@ -152,7 +154,7 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 					// passo 11
 					$params = self::send_email_code( $email ) ? "taac=code&email={$email}" : null;
 
-					$this->log->add( $this->id, "C3 - MKT user found but not verified: +{$cellphone}" );
+					$this->log->add( $this->id, "C3 - MKT user found but not verified: +$cellphone" );
 
 					// passo 12
 					self::redirect( $url, $params );
@@ -173,7 +175,7 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 					// passo 21
 					$params = self::send_email_code( $email ) ? "taac=code&email={$email}" : null;
 
-					$this->log->add( $this->id, "C5 - MKT user not found and not verified: +{$cellphone}" );
+					$this->log->add( $this->id, "C5 - MKT user not found and not verified: +$cellphone" );
 
 					self::redirect( $url, $params );
 				}
@@ -196,7 +198,7 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 				// passo 27
 				$params = "taac=acc&email=$email";
 
-				$this->log->add( $this->id, "C6 - MKT account found but not verified: +{$cellphone}" );
+				$this->log->add( $this->id, "C6 - MKT account found but not verified: +$cellphone" );
 
 				self::redirect( $url, $params );
 			}
@@ -205,7 +207,7 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 				// passo 29
 				$params = "taac=newacc";
 
-				$this->log->add( $this->id, "C7 - MKT new account: +{$cellphone}" );
+				$this->log->add( $this->id, "C7 - MKT new account: +$cellphone" );
 
 				self::redirect( $url, $params );
 			}
@@ -271,9 +273,9 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
 	private static function get_env( $mkt = null )
 	{
 		if ( $mkt )
-			return ( ( strpos( home_url(), "dev-" ) !== FALSE ) ? "dev-" : "" );
+			return ( self::checkHost() ? "dev-" : "" );
 		else
-			return ( ( strpos( home_url(), "dev-" ) !== FALSE ) ? "-hml" : "" );
+			return ( self::checkHost() ? "-hml" : "" );
 	}
 
 	private static function get_url()
@@ -324,5 +326,12 @@ class TAA_TRIIBO_REST_Users_Controller extends WP_REST_Controller
         $resp = json_decode( $resp, TRUE );
 
 		return ( !$resp[ "success" ] ) ? false : true;
+	}
+
+	private static function checkHost()
+	{
+		return ( strpos( home_url(), "dev-"      ) !== FALSE ||
+				 strpos( home_url(), "localhost" ) !== FALSE ||
+				 strpos( home_url(), "127.0.0.1" ) !== FALSE ) ? true : false;
 	}
 }

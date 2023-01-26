@@ -94,6 +94,10 @@ class TAA_Triibo_Auth_App
             ];
         }
 
+		$log = ( function_exists( "wc_get_logger" ) ) ? wc_get_logger() : new WC_Logger();
+		$log->add( "triibo_auth_app", "==================================" );
+		$log->add( "triibo_auth_app", json_encode( [ "taa_validate_code", $result ] ) );
+
         echo json_encode( $result );
         die();
     }
@@ -187,6 +191,10 @@ class TAA_Triibo_Auth_App
             }
         }
 
+		$log = ( function_exists( "wc_get_logger" ) ) ? wc_get_logger() : new WC_Logger();
+		$log->add( "triibo_auth_app", "==================================" );
+		$log->add( "triibo_auth_app", json_encode( [ "taa_new_account", $result ] ) );
+
         echo json_encode( $result );
         die();
     }
@@ -238,6 +246,10 @@ class TAA_Triibo_Auth_App
                 ];
             }
         }
+
+		$log = ( function_exists( "wc_get_logger" ) ) ? wc_get_logger() : new WC_Logger();
+		$log->add( "triibo_auth_app", "==================================" );
+		$log->add( "triibo_auth_app", json_encode( [ "taa_new_account", $result ] ) );
 
         echo json_encode( $result );
         die();

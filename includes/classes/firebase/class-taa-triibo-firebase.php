@@ -19,11 +19,15 @@ class TAA_Triibo_Firebase
 {
 	public function __construct()
 	{
+		$host = ( strpos( home_url(), "dev-"      ) !== FALSE ||
+                  strpos( home_url(), "localhost" ) !== FALSE ||
+                  strpos( home_url(), "127.0.0.1" ) !== FALSE ) ? true : false;
+
         /**
          * Verifica o ambiente que está
          * $isDev = strpos( home_url(), "dev-" );
          */
-        if ( strpos( home_url(), "dev-" ) !== FALSE )
+        if ( $host )
         {
             define( "TAA_API_URL",       "https://triibo-api-gateway-hml.triibo.com.br/"                ); // HOMOLOG
             define( "TAA_API_TOKEN",     "7472216240776562417070486d4c6170693139"                       ); // HOMOLOG
@@ -198,6 +202,11 @@ class TAA_Triibo_Firebase
 
         $result = curl_exec( $ch );
         curl_close( $ch );
+
+		$log = ( function_exists( "wc_get_logger" ) ) ? wc_get_logger() : new WC_Logger();
+		$log->add( "triibo_auth_app", "==================================" );
+		$log->add( "triibo_auth_app", $api . " - req : " . json_encode( $params ) );
+		$log->add( "triibo_auth_app", $api . " - res : " . $result );
 
         return json_decode( $result, TRUE );
     }
